@@ -1,121 +1,110 @@
-# ChatBot-Proveedores-LB
+# Chatbot Pastelería "La Básica" — Simulador de pedidos Take Away
 
-Bot de WhatsApp para la gestion interna de proveedores de **La Basica Pasteleria**.  
-Desarrollado como Trabajo Practico Integrador de Organizacion Empresarial — UTN TUPaD.
+Trabajo Práctico Integrador de **Organización Empresarial** (TUP a Distancia).
 
----
+Como consultores tecnológicos, se identificó un **proceso administrativo manual e ineficiente**
+—la gestión de pedidos de tortas para retiro programado— y se lo automatizó mediante un
+**chatbot** cuya lógica responde fielmente a un modelo de procesos **BPMN 2.0**. La entrega es
+una **simulación de proceso** por consola, con persistencia en archivos y manejo de errores de
+entrada (caminos infelices).
 
-## Funcionalidades
+## Datos del trabajo
 
-| Opcion | Funcion |
-|--------|---------|
-| 1 | Ver proveedores (todos o por categoria) |
-| 2 | Dar de alta un proveedor |
-| 3 | Actualizar datos de un proveedor |
-| 4 | Dar de baja un proveedor |
+- **Institución:** Universidad Tecnológica Nacional — TUP a Distancia
+- **Materia:** Organización Empresarial
+- **Comisión:** N° 11 — Regional Venado Tuerto
+- **Integrantes:** Gonzalo Isaias, Franco Kaddour
+- **Repositorio:** https://github.com/gjisaias/UTN-TPIntegrador-OE
 
----
+## El proceso automatizado
 
-## Requisitos previos
+El bot guía al cliente de punta a punta: elección de tortas (carrito con agrupación de
+cantidades), validación de stock en tiempo real, toma y validación de datos (nombre y teléfono),
+selección de fecha y turno con control de cupo, forma de pago, generación de un comprobante con
+identificador único y persistencia del pedido. El proceso se modeló en sus dos flujos —**AS-IS**
+(manual, actual) y **TO-BE** (automatizado con el chatbot)— en notación BPMN 2.0.
 
-- Python 3.10 o superior
-- Cuenta en [Twilio](https://www.twilio.com) (plan gratuito)
-- [ngrok](https://ngrok.com) instalado
+## Arquitectura: del BPMN al código
 
----
+La lógica está implementada como una **máquina de estados**, de modo que el bot "tiene memoria"
+y sabe en qué paso del proceso se encuentra el cliente:
 
-## Instalacion
+- Cada **estado** del diagrama BPMN es una función en `main.py` (despachador `ESTADOS`).
+- Cada **compuerta (gateway)** es una estructura `if/elif` que devuelve el próximo estado.
+- Cada **regla de negocio (RN-01 … RN-13)** se valida en tiempo de ejecución.
 
-```bash
-# 1. Clonar el repositorio
-git clone https://github.com/tuusuario/ChatBot-Proveedores-LB.git
-cd ChatBot-Proveedores-LB
+Así, el código puede leerse siguiendo el diagrama: el BPMN actúa como "contrato" del software.
 
-# 2. Instalar dependencias
-pip install -r requirements.txt
+**Robustez (caminos infelices).** El bot maneja entradas inválidas sin romperse: texto donde se
+espera un número, opción fuera de rango, campo vacío, nombre o teléfono mal formados, torta sin
+stock y turno completo. Además, el cliente puede escribir `cancelar` en cualquier paso para
+abortar el pedido en curso y volver al menú principal (flujo de excepción).
 
-# 3. Generar la base de datos Excel con proveedores de muestra
-python crear_excel.py
-```
+## Stack
 
----
+- **Lenguaje:** Python 3 (solo librería estándar: `csv`, `os`, `datetime`). No requiere instalar
+  dependencias externas.
+- **Plataforma:** simulación por consola (CLI). El diseño separa la lógica de estados de la
+  interfaz, por lo que es portable a Telegram/WhatsApp reemplazando solo la capa de
+  entrada/salida.
+- **Persistencia:** archivos CSV como base de datos simulada (tortas, pedidos, detalle y turnos).
 
-## Configuracion de Twilio Sandbox
+## Cómo desplegar y ejecutar
 
-1. Ir a [console.twilio.com](https://console.twilio.com) → Messaging → Try it out → Send a WhatsApp message
-2. Escanear el QR o enviar el codigo de activacion desde tu WhatsApp
-3. Copiar el **Account SID** y el **Auth Token** desde el dashboard (no son necesarios en el codigo actual, se usan para enviar mensajes proactivos)
-
----
-
-## Ejecucion
-
-### Terminal 1 — Levantar el servidor Flask
-
-```bash
-python bot.py
-```
-
-El servidor corre en `http://localhost:5000`
-
-### Terminal 2 — Exponer con ngrok
+Requiere Python 3 instalado. Desde la carpeta del proyecto:
 
 ```bash
-ngrok http 5000
+python main.py
 ```
 
-Copiá la URL `https://XXXX.ngrok.io` que aparece.
+Los archivos CSV deben estar en la misma carpeta que `main.py` (el programa los lee al iniciar y
+los actualiza al confirmar un pedido).
 
-### Configurar webhook en Twilio
-
-1. Ir a Twilio → Sandbox Settings
-2. En **"When a message comes in"** pegar:  
-   `https://XXXX.ngrok.io/webhook`
-3. Metodo: **HTTP POST**
-4. Guardar
-
----
-
-## Uso
-
-Desde WhatsApp, enviá un mensaje al numero de Twilio Sandbox.  
-Escribi **hola** para iniciar el menu.
-
----
-
-## Estructura del proyecto
+## Estructura del repositorio
 
 ```
-ChatBot-Proveedores-LB/
-├── bot.py              # Logica del chatbot + servidor Flask
-├── crear_excel.py      # Script de inicializacion de la BD Excel
-├── proveedores.xlsx    # Base de datos (se genera con crear_excel.py)
-├── requirements.txt    # Dependencias Python
+chatbot_pasteleria/
+├── main.py                          # Código fuente: máquina de estados del chatbot
+├── tortas.csv                       # Persistencia: catálogo y stock de tortas
+├── pedidos.csv                      # Persistencia: pedidos registrados
+├── detalle_pedidos.csv              # Persistencia: líneas de cada pedido (torta y cantidad)
+├── turnos.csv                       # Persistencia: cupo de pedidos por fecha y turno
+├── as_is_pasteleria.png             # Diagrama BPMN 2.0 — proceso actual (AS-IS)
+├── bpmn_pasteleria.png              # Diagrama BPMN 2.0 — proceso propuesto (TO-BE)
+├── capturas_oe/                     # Capturas de las consultas a la IA (ia_1.png, ia_2.png)
+├── Informe_TPI_OE_Pasteleria.pdf    # Informe técnico (PDF)
 └── README.md
 ```
 
----
+## Reglas de negocio implementadas
 
-## Estructura del Excel (`proveedores.xlsx`)
+| Regla | Descripción |
+|---|---|
+| RN-01 | Nombre y apellido válidos (solo letras y guion) |
+| RN-02 | Teléfono válido (solo dígitos, 6 a 15) |
+| RN-03 / RN-04 | Mostrar y seleccionar una de 5 fechas desde el día siguiente |
+| RN-05 | Turnos disponibles: 09:00–12:00 y 13:00–17:00 |
+| RN-06 / RN-07 | Máximo 10 pedidos por turno; si está completo, elegir otro |
+| RN-08 / RN-09 | Verificar stock antes de agregar; si no hay, elegir otra torta |
+| RN-10 | Un pedido puede contener varias tortas |
+| RN-11 | Seleccionar forma de pago |
+| RN-12 | Generar identificador único de pedido (PED-XXXX) |
+| RN-13 | Generar comprobante y almacenar el pedido |
 
-| Columna | Descripcion |
-|---------|-------------|
-| ID | Identificador unico (P001, P002...) |
-| Nombre | Nombre del proveedor |
-| Categoria | Panaderia / Reposteria / Bebidas / Fiambres y Sandwicheria / Insumos de Cocina |
-| Productos | Lista de productos que provee |
-| Telefono | Numero de contacto |
-| Dias_Entrega | Dias habituales de entrega |
-| Forma_Pago | Efectivo / Transferencia / Credito 30 dias |
-| Estado | Activo / Inactivo |
-| Fecha_Alta | Fecha de registro |
-| Ultima_Modificacion | Ultima actualizacion |
+## Manual de usuario
 
----
+| Acción | Cómo |
+|---|---|
+| Iniciar | Ejecutar `python main.py` y elegir **1. Realizar un pedido**. |
+| Elegir tortas | Ingresar el número de la torta; repetir respondiendo **s** a "¿Agregar otra?". |
+| Confirmar | Cargar nombre, teléfono, fecha, turno y forma de pago; el bot emite el comprobante. |
+| Abortar pedido | Escribir **cancelar** en cualquier paso: descarta el carrito y vuelve al menú principal. |
+| Salir | Opción **2** del menú. |
 
-## Integrantes
+## Documentación
 
-- Franco Kaddour — Desarrollo
-- Gonzalo Isaias — Repositorio y Jira
+El informe técnico completo (descripción del proceso, AS-IS/TO-BE, reglas de negocio, diagramas
+BPMN 2.0, máquina de estados, diccionario de datos, diseño de persistencia, pruebas de estrés,
+herramientas de IA utilizadas y manual de usuario) está en
+[`Informe_TPI_OE_Pasteleria.pdf`](Informe_TPI_OE_Pasteleria.pdf).
 
-**UTN TUPaD — Organizacion Empresarial — Comision 11 — 2026**
