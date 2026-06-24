@@ -10,11 +10,13 @@ entrada (caminos infelices).
 
 ## Datos del trabajo
 
-- **Institución:** Universidad Tecnológica Nacional — TUP a Distancia
-- **Materia:** Organización Empresarial
-- **Comisión:** N° 11 — Regional Venado Tuerto
-- **Integrantes:** Gonzalo Isaias, Franco Kaddour
-- **Repositorio:** https://github.com/gjisaias/UTN-TPIntegrador-OE
+| Campo | Detalle |
+|-------|---------|
+| Institución | Universidad Tecnológica Nacional — TUP a Distancia |
+| Materia | Organización Empresarial |
+| Comisión | N° 11 — Regional Venado Tuerto |
+| Integrantes | Gonzalo Isaias, Franco Kaddour |
+| Repositorio | https://github.com/gjisaias/UTN-TPIntegrador-OE |
 
 ## El proceso automatizado
 
@@ -42,18 +44,16 @@ abortar el pedido en curso y volver al menú principal (flujo de excepción).
 
 ## Stack
 
-- **Lenguaje:** Python 3 (solo librería estándar: `csv`, `os`, `datetime`). No requiere instalar
-  dependencias externas.
-- **Plataforma:** simulación por consola (CLI). El diseño separa la lógica de estados de la
-  interfaz, por lo que es portable a Telegram/WhatsApp reemplazando solo la capa de
-  entrada/salida.
+- **Lenguaje:** Python 3 (solo librería estándar: `csv`, `os`, `datetime`). No requiere instalar dependencias externas.
+- **Plataforma:** simulación por consola (CLI). El diseño separa la lógica de estados de la interfaz, por lo que es portable a Telegram/WhatsApp reemplazando solo la capa de entrada/salida.
 - **Persistencia:** archivos CSV como base de datos simulada (tortas, pedidos, detalle y turnos).
 
-## Cómo desplegar y ejecutar
+## Cómo ejecutar
 
-Requiere Python 3 instalado. Desde la carpeta del proyecto:
+Requiere Python 3 instalado. Desde la carpeta `codigo/`:
 
 ```bash
+cd codigo
 python main.py
 ```
 
@@ -63,23 +63,27 @@ los actualiza al confirmar un pedido).
 ## Estructura del repositorio
 
 ```
-chatbot_pasteleria/
-├── main.py                          # Código fuente: máquina de estados del chatbot
-├── tortas.csv                       # Persistencia: catálogo y stock de tortas
-├── pedidos.csv                      # Persistencia: pedidos registrados
-├── detalle_pedidos.csv              # Persistencia: líneas de cada pedido (torta y cantidad)
-├── turnos.csv                       # Persistencia: cupo de pedidos por fecha y turno
-├── as_is_pasteleria.png             # Diagrama BPMN 2.0 — proceso actual (AS-IS)
-├── bpmn_pasteleria.png              # Diagrama BPMN 2.0 — proceso propuesto (TO-BE)
-├── capturas_oe/                     # Capturas de las consultas a la IA (ia_1.png, ia_2.png)
-├── Informe_TPI_OE_Pasteleria.pdf    # Informe técnico (PDF)
+Integrador/
+├── codigo/
+│   ├── main.py                    # Máquina de estados del chatbot
+│   ├── tortas.csv                 # Catálogo y stock de tortas
+│   ├── pedidos.csv                # Pedidos registrados
+│   ├── detalle_pedidos.csv        # Líneas de cada pedido (torta y cantidad)
+│   └── turnos.csv                 # Cupo de pedidos por fecha y turno
+├── diagramas/
+│   ├── BPMN_AS-IS.png             # Proceso actual (manual)
+│   └── BPMN_TO-BE.png             # Proceso propuesto (automatizado)
+├── capturas/
+│   ├── ia_1.png                   # Consultas realizadas a la IA
+│   └── ia_2.png
+├── Informe_TPI_OE_Pasteleria.pdf  # Informe técnico completo
 └── README.md
 ```
 
 ## Reglas de negocio implementadas
 
 | Regla | Descripción |
-|---|---|
+|-------|-------------|
 | RN-01 | Nombre y apellido válidos (solo letras y guion) |
 | RN-02 | Teléfono válido (solo dígitos, 6 a 15) |
 | RN-03 / RN-04 | Mostrar y seleccionar una de 5 fechas desde el día siguiente |
@@ -94,12 +98,12 @@ chatbot_pasteleria/
 ## Manual de usuario
 
 | Acción | Cómo |
-|---|---|
-| Iniciar | Ejecutar `python main.py` y elegir **1. Realizar un pedido**. |
-| Elegir tortas | Ingresar el número de la torta; repetir respondiendo **s** a "¿Agregar otra?". |
-| Confirmar | Cargar nombre, teléfono, fecha, turno y forma de pago; el bot emite el comprobante. |
-| Abortar pedido | Escribir **cancelar** en cualquier paso: descarta el carrito y vuelve al menú principal. |
-| Salir | Opción **2** del menú. |
+|--------|------|
+| Iniciar | Ejecutar `python main.py` y elegir **1. Realizar un pedido** |
+| Elegir tortas | Ingresar el número de la torta; repetir respondiendo **s** a "¿Agregar otra?" |
+| Confirmar | Cargar nombre, teléfono, fecha, turno y forma de pago; el bot emite el comprobante |
+| Abortar pedido | Escribir **cancelar** en cualquier paso: descarta el carrito y vuelve al menú principal |
+| Salir | Opción **2** del menú |
 
 ## Documentación
 
@@ -107,4 +111,3 @@ El informe técnico completo (descripción del proceso, AS-IS/TO-BE, reglas de n
 BPMN 2.0, máquina de estados, diccionario de datos, diseño de persistencia, pruebas de estrés,
 herramientas de IA utilizadas y manual de usuario) está en
 [`Informe_TPI_OE_Pasteleria.pdf`](Informe_TPI_OE_Pasteleria.pdf).
-

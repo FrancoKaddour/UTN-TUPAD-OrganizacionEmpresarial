@@ -17,13 +17,18 @@ UTN-TUPAD-OrganizacionEmpresarial/
 │       └── README.md
 └── Integrador/
     ├── codigo/
-    │   ├── bot.py
-    │   ├── crear_excel.py
-    │   ├── proveedores.xlsx
-    │   └── requirements.txt
+    │   ├── main.py
+    │   ├── tortas.csv
+    │   ├── pedidos.csv
+    │   ├── detalle_pedidos.csv
+    │   └── turnos.csv
     ├── diagramas/
     │   ├── BPMN_AS-IS.png
     │   └── BPMN_TO-BE.png
+    ├── capturas/
+    │   ├── ia_1.png
+    │   └── ia_2.png
+    ├── Informe_TPI_OE_Pasteleria.pdf
     └── README.md
 ```
 
@@ -33,7 +38,7 @@ UTN-TUPAD-OrganizacionEmpresarial/
 |---------|-------------|
 | [Diccionario de Datos](Entregas/Diccionario%20de%20Datos/) | Diseño y documentación de un diccionario de datos empresarial |
 | [Gestión Colaborativa](Entregas/Gesti%C3%B3n%20Colaborativa/) | Herramientas y metodologías de gestión colaborativa organizacional |
-| [Integrador — ChatBot Proveedores](Integrador/) | Bot de WhatsApp para gestión interna de proveedores (La Básica Pastelería) |
+| [Integrador — ChatBot Pastelería](Integrador/) | Chatbot de pedidos take away para "La Básica Pastelería" (BPMN 2.0 + Python) |
 
 ## Integrantes
 
